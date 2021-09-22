@@ -93,13 +93,13 @@ describe('SphynxPair', () => {
   const optimisticTestCases: BigNumber[][] = [
     ['999000000000000000', 5, 10, 1], // given amountIn, amountOut = floor(amountIn * .999)
     ['999000000000000000', 10, 5, 1],
-    ['999000000000000000', 5, 5, 1]
-    // [5, 5, 1, '999000000000000000'] // given amountOut, amountIn = ceiling(amountOut / .999)
+    ['999000000000000000', 5, 5, 1],
+    [1, 5, 5, '1001001001001001002'] // given amountOut, amountIn = ceiling(amountOut / .999)
   ].map(a => a.map(n => (typeof n === 'string' ? bigNumberify(n) : expandTo18Decimals(n))))
   optimisticTestCases.forEach((optimisticTestCase, i) => {
     it(`optimistic:${i}`, async () => {
       const [outputAmount, token0Amount, token1Amount, inputAmount] = optimisticTestCase
-      console.log('amount: ', outputAmount.div(9990).toString())
+      console.log('Actual amount: ', outputAmount.div(9990).toString())
       await addLiquidity(token0Amount, token1Amount)
       await token0.transfer(pair.address, inputAmount)
       await expect(pair.swap(outputAmount.add(1), 0, wallet.address, '0x', overrides)).to.be.revertedWith('Sphynx: K')
